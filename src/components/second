@@ -1,0 +1,44 @@
+//   async componentDidMount() {
+//     try {
+//       this.setState({ loading: true });
+//       const { hits, totalHits } = await fetchImages();
+//       this.setState({ images: [...hits], totalHits: totalHits });
+//     } catch (error) {
+//       this.setState({ error });
+//     } finally {
+//       this.setState({ loading: false });
+//     }
+//   };
+
+//   async componentDidUpdate(prevProps, prevState) {
+//     const { query, page } = this.state;
+
+//     if (prevState.page !== page || prevState.query !== query) {
+//       this.setState({ loading: true });
+//       this.getDataGallery({ query, page });
+//       if (!this.state.images.length || page > 1) {
+//         return;
+//       } else {
+//         toast.success(`We found ${this.state.totalHits} pictures`);
+//       }
+//     }
+//   }
+
+//   getDataGallery = async ({ query, page }) => {
+//     try {
+//       const { hits, totalHits } = await fetchImages(query, page);
+//       if (hits.length > 0) {
+//         this.setState(prev => ({
+//           images: [...prev.images, ...hits],
+//           totalHits: totalHits,
+//         }));
+//       } else {
+//         toast.error(`sorry, something went wrong...`);
+//       }
+//     } catch (error) {
+//       this.setState({ error: error.message }); // Исправлено massage на message
+//       console.log(`error: ${error.message}`); // Исправлено massage на message
+//     } finally {
+//       this.setState({ loading: false });
+//     }
+//   };
