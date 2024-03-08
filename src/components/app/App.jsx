@@ -47,7 +47,7 @@ useEffect(() => {
     setTotalHits(totalHits);
       
     if (page === 1) {
-      toast.success(`Hooray! We found ${totalHits} images.`);
+      toast.success(`Hooray! We found ${totalHits} images!`);
     }
 
     } catch (error) {
