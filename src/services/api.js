@@ -28,6 +28,5 @@ export const fetchImages = async configParams => {
         ...configParams,
       },
     });
-    console.log(data);
     return data;
   };

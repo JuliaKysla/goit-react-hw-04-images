@@ -8,7 +8,9 @@ export class ImageGalleryItem extends React.Component {
       const {id, webformatURL, tags, openModal, largeImageURL} = this.props;
         return (
 <li className={s.ImageGalleryItem} id={id}>
-  <img className={s.image} src={webformatURL} alt={tags} onClick={() => openModal(largeImageURL)}/>
+  <img className={s.image} 
+  src={webformatURL} alt={tags} 
+  onClick={() => openModal(largeImageURL)}/>
 </li>
             )
     }

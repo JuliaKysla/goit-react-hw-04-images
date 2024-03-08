@@ -1,4 +1,6 @@
-import React from "react"; 
+import React, { useState, useEffect } from "react"; 
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import { Searchbar } from "../searchbar/Searchbar";
 import { ImageGallery } from "../imageGallery/ImageGallery";
 import s from "./App.module.css"
@@ -7,85 +9,99 @@ import Button from "components/buttom/Button";
 import { fetchImages } from "../../services/api";
 import Modal from "components/modal/Modal";
 
-export class App extends React.Component {
+export const App = () => {
 
-state = {
-images: [],
-totalHits:0,
-loading: false,
-error: null,
-q:'',
-page:1,
-isOpen: false,
-largeImageURL: '',
-}
+const [images,setImages] = useState([]);
+const [totalHits, setTotalHits] = useState(0);
+const [loading, setLoading] = useState(false);
+const [error, setError] = useState(null);
+const [q, setQ] = useState('');
+const [page, setPage] = useState(1);
+const [isOpen, setIsOpen] = useState(false);
+const [largeImageURL, setLargeImage] = useState('');
 
-
-async componentDidMount() {
-  try {
-    this.setState({ loading: true });
-    const {hits, totalHits} = await fetchImages()
-    this.setState({images: hits, totalHits: totalHits})
-  } catch (error) {
-    this.setState({error})
-  }finally {
-    this.setState({ loading: false });
+useEffect(() => {
+  if(!q){
+    return;
   }
-}
+  const getData = async () => {
+    setLoading(true)
+    setError(null)
+    try {
+     const {hits, totalHits} = await fetchImages(q, page)
 
-async componentDidUpdate(prevProps, prevState) {
-const {q, page} = this.state;
+     if (hits.length === 0) {
+      toast.warn(
+        `Sorry, there are no images matching your search query. Please try again.`
+      );
+      return;
+    }
 
-if(prevState.q !== q || prevState.page !== page) {
-  try {
-    this.setState({ loading: true });
-    const {hits, totalHits} = this.state.q 
-    ? await fetchImages({
-      page: this.state.page, 
-      q: this.state.q}) 
-      : await fetchImages({page: this.state.page});
-    this.setState(prev => ({images: [...prev.images, ...hits], totalHits: totalHits}))
-  } catch (error) {
-    this.setState({error})
-  } finally {
-    this.setState({ loading: false });
+    if (page === Math.ceil(totalHits / 12)) {
+      toast.info(
+        `We're sorry, but you've reached the end of search results.`
+      );
+    }
+    setImages(prevImages => [...prevImages, ...hits]);
+    setLoading(false);
+    setTotalHits(totalHits);
+      
+    if (page === 1) {
+      toast.success(`Hooray! We found ${totalHits} images.`);
+    }
+
+    } catch (error) {
+      setError(error)
+      toast.error(error.message);
+    } finally{
+      setLoading(false)
+    }
+    
   }
-}
-}
+  getData();
+},[q, page])
 
-handleImg = largeImageURL => {
+
+const handleImg = largeImageURL => {
   console.log(largeImageURL)
-  this.setState({ isOpen: true, largeImageURL });
+setIsOpen(true)
+setLargeImage(largeImageURL)
+
+  // this.setState({ isOpen: true, largeImageURL });
 };
 
-handleToggleModal = () => {
-  this.setState(prev => ({isOpen:!prev.isOpen}))
+const handleToggleModal = () => {
+  setIsOpen(false)
+  // this.setState(prev => ({isOpen:!prev.isOpen}))
 }
-handleSetQuery = query => {
-
-this.setState({q: query, images:[], page: 1})
+const handleSetQuery = query => {
+setImages([])
+setQ(query)
+setPage(1)
+// this.setState({q: query, images:[], page: 1})
 }
-handleLoadMore = () => {
-  this.setState(prev => ({page: prev.page +1}))
-}
+const handleLoadMore = () => {
+  setPage(prevPage => prevPage + 1)
+  // this.setState(prev => ({page: prev.page +1}))
+};
 
 
 
-    render() {
-      const { images, loading, totalHits, isOpen, largeImageURL } = this.state;
+//     render() {
+//       const { images, loading, totalHits, isOpen, largeImageURL } = this.state;
       return (
         <div className={s.App}>
-          <Searchbar handleSetQuery={this.handleSetQuery} />
-          <ImageGallery images={images} openModal={this.handleImg}/>
+          <Searchbar handleSetQuery={handleSetQuery} />
+          <ImageGallery images={images} openModal={handleImg}/>
           {loading && !images.length &&<Loader />}
           {images.length > 0 && images.length < totalHits ? (
-            <Button onLoadMore={this.handleLoadMore} />
+            <Button onLoadMore={handleLoadMore} />
           ) : null}
 
 {isOpen && (
-          <Modal src={largeImageURL} closeModal={this.handleToggleModal} />
+          <Modal src={largeImageURL} closeModal={handleToggleModal} />
         )}
         </div>
       );
     }
-  }
+
