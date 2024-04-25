@@ -7,7 +7,7 @@ import Button from '../buttom/Button';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Loader from 'components/loader/Loader';
-import { initialState, imagesReducer } from '../imageReducer/reducer';
+import { initialState, imagesReducer } from '../ImageReducer/reducer';
 
 export const App = () => {
   const [state, dispatch] = useReducer(imagesReducer, initialState);
