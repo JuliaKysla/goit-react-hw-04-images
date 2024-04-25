@@ -1,75 +1,47 @@
 import React, { useEffect } from 'react';
-import s from './Modal.module.css';
+import css from './Modal.module.css';
 
-export const Modal = ({src, closeModal, tags}) => {
+import PropTypes from 'prop-types';
 
+const Modal = ({ largeImageURL, tags, onCloseModal }) => {
   useEffect(() => {
-    document.body.style.overflowY = 'hidden';
-    window.addEventListener('keydown', handleKeyDown);
+    const handleModalCloseKeyDown = e => {
+      if (e.code === 'Escape') {
+        onCloseModal();
+      }
+    };
+
+    document.addEventListener('keydown', handleModalCloseKeyDown);
+    document.body.style.overflow = 'hidden';
 
     return () => {
-      document.body.style.overflowY = 'auto';
-      window.removeEventListener('keydown', handleKeyDown);
+      document.removeEventListener('keydown', handleModalCloseKeyDown);
+      document.body.style.overflow = 'visible';
     };
-  });
+  }, [onCloseModal]);
 
-  const handleKeyDown = e => {
-    if (e.key === 'Escape') {
-      closeModal();
+  const handleModalClose = e => {
+    if (e.currentTarget === e.target) {
+      onCloseModal();
     }
   };
 
-  const handleBackdropClick = e => {
-    if (e.target === e.currentTarget) {
-      closeModal();
-    }
-  };
-
-    return (
-      <div className={s.overlay} onClick={handleBackdropClick}>
-        <div className={s.modal}>
-          <img src={src} alt={tags} className={s.largeImage}/>
-        </div>
+  return (
+    <div className={css.overlay} onClick={handleModalClose}>
+      <div className={css.modal}>
+        <button className={css.closeButton} onClick={handleModalClose}>
+          X
+        </button>
+        <img src={largeImageURL} alt={tags} className={css.largeImage} />
       </div>
-    );
-  }
+    </div>
+  );
+};
 
-
-
-
-
-// class Modal extends Component {
-//   componentDidMount() {
-//     document.body.style.overflowY = 'hidden';
-//     document.addEventListener('keydown', this.handleKeyDown);
-//   }
-//   componentWillUnmount() {
-//     document.body.style.overflowY = 'auto';
-//     document.removeEventListener('keydown', this.handleKeyDown);
-//   }
-
-  // handleKeyDown = e => {
-  //   if (e.key === 'Escape') {
-  //     this.props.closeModal();
-  //   }
-  // };
-
-  // handleBackdropClick = e => {
-  //   if (e.target === e.currentTarget) {
-  //     this.props.closeModal();
-  //   }
-  // };
-
-  // render() {
-  //   const { tags} = this.props
-  //   return (
-  //     <div className={s.overlay} onClick={this.handleBackdropClick}>
-  //       <div className={s.modal}>
-  //         <img src={this.props.src} alt={tags} className={s.largeImage}/>
-  //       </div>
-  //     </div>
-  //   );
-  // }
-
+Modal.propTypes = {
+  largeImageURL: PropTypes.string.isRequired,
+  tags: PropTypes.string.isRequired,
+  onCloseModal: PropTypes.func.isRequired,
+};
 
 export default Modal;

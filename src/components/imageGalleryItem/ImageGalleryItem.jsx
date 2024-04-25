@@ -1,18 +1,38 @@
-import React from 'react'
-import s from './ImageGalerryItem.module.css'
+import React, { useState } from 'react';
+import css from './ImageGalerryItem.module.css';
+import Modal from '../Modal/Modal';
+import PropTypes from 'prop-types';
 
-export class ImageGalleryItem extends React.Component {
+const ImageGalleryItem = ({ id, webformatURL, largeImageURL, tags }) => {
+  const [isOpen, setIsOpen] = useState(false);
 
+  const handleToglleModal = () => {
+    setIsOpen(prev => !prev);
+  };
+  return (
+    <li className={css.galleryItem} id={id}>
+      <img
+        src={webformatURL}
+        alt={tags}
+        onClick={handleToglleModal}
+        className={css.galleryImage}
+      />
+      {isOpen && (
+        <Modal
+          largeImageURL={largeImageURL}
+          tags={tags}
+          onCloseModal={handleToglleModal}
+        />
+      )}
+    </li>
+  );
+};
 
-    render(){
-      const {id, webformatURL, tags, openModal, largeImageURL} = this.props;
-        return (
-<li className={s.ImageGalleryItem} id={id}>
-  <img className={s.image} 
-  src={webformatURL} alt={tags} 
-  onClick={() => openModal(largeImageURL)}/>
-</li>
-            )
-    }
-   
-}
+ImageGalleryItem.propTypes = {
+  id: PropTypes.number.isRequired,
+  webformatURL: PropTypes.string.isRequired,
+  largeImageURL: PropTypes.string.isRequired,
+  tags: PropTypes.string.isRequired,
+};
+
+export default ImageGalleryItem;
