@@ -1,13 +1,13 @@
 import React, { useEffect, useCallback, useReducer } from 'react';
 import css from './App.module.css';
 import { fetchGalerryItems } from '../../services/api';
-import SearchBar from '../Searchbar/Searchbar';
-import ImageGallery from '../ImageGallery/ImageGallery';
-import Button from '../Buttom/Button';
+import SearchBar from '../searchbar/Searchbar';
+import ImageGallery from '../imageGallery/ImageGallery';
+import Button from '../buttom/Button';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import Loader from 'components/Loader/Loader';
-import { initialState, imagesReducer } from '../ImageReducer/reducer';
+import Loader from 'components/loader/Loader';
+import { initialState, imagesReducer } from '../imageReducer/reducer';
 
 export const App = () => {
   const [state, dispatch] = useReducer(imagesReducer, initialState);
